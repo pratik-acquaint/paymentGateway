@@ -23,8 +23,7 @@ const StripeCheckout = (props) => {
             setLoading(false);
             return;
         }
-        // else {
-          
+        // else {       
         //     try {
         //         let token = localStorage.getItem('token')
         //         const headers = {
