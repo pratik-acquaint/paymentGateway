@@ -12,22 +12,15 @@ export async function POST(request) {
         let validateUser;
         try {
             validateUser = validateToken(token);
-        } catch (error) {
+        } catch (error) {            
             return  NextResponse.json({message : "Token is Invalid" || error.message }, { status: 401 });
         }
-
-        const { paymentId, userId } = await request.json();
-        console.log('paymentId,userId', paymentId, userId)
-
-
         const data = {
-            paymentId: paymentId || 1,
             userId: validateUser?.userId,
         };
 
         // Save Payment data to the database
         await prisma.payments.create({ data });
-
         return NextResponse.json({ result: "success", message: 'Payment Added Successfully' }, { status: 200 });
     }
     catch (error) {

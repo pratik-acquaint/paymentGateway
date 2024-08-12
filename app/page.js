@@ -3,8 +3,6 @@ import React, { useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
@@ -13,9 +11,10 @@ import Container from '@mui/material/Container';
 import Link from 'next/link';
 import Joi from 'joi';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
 export default function SignUp() {
-    const router = useRouter()
+    const { push } = useRouter()
     const [formData, setFormdata] = useState({
         email: '',
         password: '',
@@ -52,6 +51,7 @@ export default function SignUp() {
 
     const handleOnClick = async () => {
         const validationErrors = validate();
+        const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
         if (validationErrors) {
             setErrors(validationErrors);
             return;
@@ -63,9 +63,10 @@ export default function SignUp() {
                 'password': formData.password,
             }
 
-            //   let res = await RegisterUser(reqData);
+            let res = await axios.post(`${API_URL}/signIn`, reqData);
             if (res?.data) {
-                router("/");
+                localStorage.setItem('token', res?.data?.token || null)
+                push("/dashboard");
                 alert(res?.data?.message)
             }
             else {
@@ -93,7 +94,7 @@ export default function SignUp() {
                 </Typography>
                 <Box component="formData" noValidate sx={{ mt: 3 }}>
                     <Grid container spacing={1}>
-                  
+
                         <Grid item xs={12} >
                             <TextField
                                 required
@@ -104,7 +105,7 @@ export default function SignUp() {
                                 autoComplete="email"
                                 onChange={handleOnChange}
                             />
-                            {errors.email && <p style={{ color: 'red',margin: '4px 0' }}>{errors.email}</p>}
+                            {errors.email && <p style={{ color: 'red', margin: '4px 0' }}>{errors.email}</p>}
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
@@ -117,7 +118,7 @@ export default function SignUp() {
                                 autoComplete="new-password"
                                 onChange={handleOnChange}
                             />
-                            {errors.password && <p style={{ color: 'red',margin: '4px 0' }}>{errors.password}</p>}
+                            {errors.password && <p style={{ color: 'red', margin: '4px 0' }}>{errors.password}</p>}
                         </Grid>
                     </Grid>
                     <Button
@@ -132,7 +133,7 @@ export default function SignUp() {
                     <Grid container justifyContent="flex-end">
                         <Grid item>
                             <Link href="/signUp" variant="body2">
-                               Dont have an account? Sign Up
+                                Dont have an account? Sign Up
                             </Link>
                         </Grid>
                     </Grid>

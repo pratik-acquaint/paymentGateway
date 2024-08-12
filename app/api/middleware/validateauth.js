@@ -1,12 +1,13 @@
 import jwt from 'jsonwebtoken';
 
 export const validateToken = (token) => {
-    const secretkey = process.env.SECRETKEY
-
-    if (!token) {
-        return res.status(401).json({ message: 'No token provided' });
-    }
     try {
+    const secretkey = process.env.SECRETKEY
+    
+    if (!token) {        
+        throw new Error('No token provided')
+        // return res.status(401).json({ message: 'No token provided' });
+    }    
         const decoded = jwt.verify(token, secretkey);
         return decoded
 

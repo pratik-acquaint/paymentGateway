@@ -11,9 +11,10 @@ import Container from '@mui/material/Container';
 import Link from 'next/link';
 import Joi from 'joi';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
-export default function SignUp() {
-    const router = useRouter()
+const SignUp = () => {
+    const { push } = useRouter()
     const [formData, setFormdata] = useState({
         name: '',
         email: '',
@@ -54,6 +55,7 @@ export default function SignUp() {
 
     const handleOnClick = async () => {
         const validationErrors = validate();
+        const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
         if (validationErrors) {
             setErrors(validationErrors);
             return;
@@ -61,14 +63,13 @@ export default function SignUp() {
         setErrors({});
         try {
             let reqData = {
-                'name': register.name,
-                'email': register.email,
-                'password': register.password,
+                'name': formData.name,
+                'email': formData.email,
+                'password': formData.password,
             }
-
-            //   let res = await RegisterUser(reqData);
+            let res = await axios.post(`${API_URL}/signUp`, reqData);
             if (res?.data) {
-                router("/");
+                push("/");
                 alert(res?.data?.message)
             }
             else {
@@ -107,7 +108,7 @@ export default function SignUp() {
                                 autoFocus
                                 onChange={handleOnChange}
                             />
-                            {errors.name && <p style={{ color: 'red',margin: '4px 0' }}>{errors.name}</p>}
+                            {errors.name && <p style={{ color: 'red', margin: '4px 0' }}>{errors.name}</p>}
                         </Grid>
 
                         <Grid item xs={12}>
@@ -120,7 +121,7 @@ export default function SignUp() {
                                 autoComplete="email"
                                 onChange={handleOnChange}
                             />
-                            {errors.email && <p style={{ color: 'red',margin: '4px 0' }}>{errors.email}</p>}
+                            {errors.email && <p style={{ color: 'red', margin: '4px 0' }}>{errors.email}</p>}
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
@@ -133,7 +134,7 @@ export default function SignUp() {
                                 autoComplete="new-password"
                                 onChange={handleOnChange}
                             />
-                            {errors.password && <p style={{ color: 'red' ,margin: '4px 0'}}>{errors.password}</p>}
+                            {errors.password && <p style={{ color: 'red', margin: '4px 0' }}>{errors.password}</p>}
                         </Grid>
                     </Grid>
                     <Button
@@ -157,3 +158,5 @@ export default function SignUp() {
         </Container>
     );
 }
+
+export default SignUp;

@@ -2,13 +2,13 @@ import { Button } from '@mui/material';
 import { loadStripe } from '@stripe/stripe-js';
 import { useState } from 'react';
 import PaidIcon from '@mui/icons-material/Paid';
+import axios from 'axios';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY);
 
 const StripeCheckout = (props) => {
-    console.log('propssssssss', props)
     const [loading, setLoading] = useState(false);
-
+    const APIURL = process.env.NEXT_PUBLIC_API_BASE_URL
     const handleClick = async () => {
         setLoading(true);
         const stripe = await stripePromise;
@@ -16,15 +16,34 @@ const StripeCheckout = (props) => {
             lineItems: [{ price: 'price_1PlpqYKxM0bICH2VyjLBMpSk', quantity: 1 }],
             mode: 'payment',
             successUrl: `${window.location.origin}/dashboard`,
+
         });
         if (error) {
             console.error('Error:', error);
             setLoading(false);
             return;
         }
-
-        // Call API to add current user to DB.
-        // await addUser()
+        // else {
+          
+        //     try {
+        //         let token = localStorage.getItem('token')
+        //         const headers = {
+        //             'token': `${token}`,
+        //         };
+        //         let res = await axios.post(`${APIURL}/addPayment`, {
+        //             headers: headers,
+        //         })
+        //         if (res?.data) {
+        //             alert(res?.data?.message)
+        //         }
+        //         else {
+        //             alert(res?.error?.data?.message)
+        //         }
+        //     }
+        //     catch (error) {
+        //         console.log(error);
+        //     }
+        // }
     };
 
     return (
