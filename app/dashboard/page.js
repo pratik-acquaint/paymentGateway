@@ -114,7 +114,7 @@ const Dashboard = () => {
             <Stack gap={"20px"} alignItems={"center"} >
 
                 <StripeCheckout />
-                
+
 
                 <Paper sx={{ width: '90%', overflow: 'hidden' }}>
                     <TableContainer sx={{ maxHeight: 500 }}>
@@ -151,7 +151,7 @@ const Dashboard = () => {
                                             {row.status ? row?.status : '--'}
                                         </TableCell>
                                         <TableCell style={{ width: 160 }} align="left">
-                                            {moment(row?.createdAt).format('DD-MM-YYYY')}
+                                            {row?.date}
                                         </TableCell>
                                     </TableRow>
                                 ))
