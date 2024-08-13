@@ -15,8 +15,6 @@ const StripeCheckout = () => {
             lineItems: [{ price: 'price_1PlpqYKxM0bICH2VyjLBMpSk', quantity: 1 }],
             mode: 'payment',
             successUrl: `${window.location.origin}/dashboard?session_id={CHECKOUT_SESSION_ID}`,
-
-
         });
         if (error) {
             console.error('Error:', error);
