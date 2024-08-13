@@ -48,7 +48,7 @@ const Dashboard = () => {
             return response.data.billing_details.email || 'No email available';
         } catch (error) {
             console.error(`Error fetching charge details: ${error.message}`);
-            return 'Error retrieving email';
+            return 'Error retrieving email!';
         }
     };
 
