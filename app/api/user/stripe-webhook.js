@@ -1,6 +1,6 @@
 import { buffer } from 'micro';
 import Stripe from 'stripe';
-import prisma from '../../lib/prisma'; 
+import prisma from '@/lib/prisma';
 
 const stripe = new Stripe(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY, {
     apiVersion: '2023-08-01',
@@ -8,7 +8,7 @@ const stripe = new Stripe(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY, {
 
 export const config = {
     api: {
-        bodyParser: false, // Stripe sends requests as raw text
+        bodyParser: false,
     },
 };
 
