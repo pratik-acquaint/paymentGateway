@@ -66,7 +66,7 @@ export default function SignUp() {
             let res = await axios.post(`${API_URL}/signIn`, reqData);
             if (res?.data) {
                 localStorage.setItem('token', res?.data?.token || null)
-                push("/dashboard");
+                push("/dashboard?session_id=abcd");
                 alert(res?.data?.message)
             }
             else {

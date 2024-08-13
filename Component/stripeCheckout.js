@@ -6,16 +6,16 @@ import axios from 'axios';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY);
 
-const StripeCheckout = (props) => {
+const StripeCheckout = () => {
     const [loading, setLoading] = useState(false);
-    const APIURL = process.env.NEXT_PUBLIC_API_BASE_URL
     const handleClick = async () => {
         setLoading(true);
         const stripe = await stripePromise;
         const { error } = await stripe.redirectToCheckout({
             lineItems: [{ price: 'price_1PlpqYKxM0bICH2VyjLBMpSk', quantity: 1 }],
             mode: 'payment',
-            successUrl: `${window.location.origin}/dashboard`,
+            successUrl: `${window.location.origin}/dashboard?session_id={CHECKOUT_SESSION_ID}`,
+
 
         });
         if (error) {

@@ -25,3 +25,14 @@ model Payments {
     createdAt DateTime @default(now()) @map(name: "created_at")
     updatedAt DateTime @updatedAt @map(name: "updated_at")
 }
+
+model Transaction {
+  id             Int      @id @default(autoincrement())
+  transactionId  String   @unique
+  customerEmail  String
+  amountTotal    Int
+  currency       String
+  paymentStatus  String
+  createdAt      DateTime
+}
+
