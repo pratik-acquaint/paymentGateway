@@ -41,7 +41,7 @@ const DashboardContent = () => {
 
     const handleRecord = async () => {
         try {
-            const response = await axios.post(`${API_URL}/stripe-webhook?session_id=${session_id}`);
+            const response = await axios.get(`${API_URL}/stripe-webhook?session_id=${session_id}`);
             console.log('Session details:', response.data);
             // Handle response and update state
         } catch (error) {

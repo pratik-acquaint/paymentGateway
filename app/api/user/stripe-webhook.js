@@ -15,7 +15,7 @@ export const config = {
 const webhookSecret = process.env.NEXT_PUBLIC_STRIPE_WEBHOOK_SECRET;
 
 export default async function handler(req, res) {
-    if (req.method == 'POST') {
+    if (req.method == 'GET') {
         const buf = await buffer(req);
         const sig = req.headers['stripe-signature'];
 
@@ -55,7 +55,7 @@ export default async function handler(req, res) {
 
         res.status(200).json({ received: true });
     } else {
-        res.setHeader('Allow', 'POST');
+        res.setHeader('Allow', 'GET');
         res.status(405).end('Method Not Allowed');
     }
 }
