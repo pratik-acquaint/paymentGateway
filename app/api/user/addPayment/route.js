@@ -18,8 +18,6 @@ export async function POST(request) {
         const data = {
             userId: validateUser?.userId,
         };
-
-        // Save Payment data to the database
         await prisma.payments.create({ data });
         return NextResponse.json({ result: "success", message: 'Payment Added Successfully' }, { status: 200 });
     }

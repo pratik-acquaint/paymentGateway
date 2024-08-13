@@ -23,26 +23,6 @@ const StripeCheckout = (props) => {
             setLoading(false);
             return;
         }
-        // else {       
-        //     try {
-        //         let token = localStorage.getItem('token')
-        //         const headers = {
-        //             'token': `${token}`,
-        //         };
-        //         let res = await axios.post(`${APIURL}/addPayment`, {
-        //             headers: headers,
-        //         })
-        //         if (res?.data) {
-        //             alert(res?.data?.message)
-        //         }
-        //         else {
-        //             alert(res?.error?.data?.message)
-        //         }
-        //     }
-        //     catch (error) {
-        //         console.log(error);
-        //     }
-        // }
     };
 
     return (
@@ -52,6 +32,7 @@ const StripeCheckout = (props) => {
             type="button"
             variant="contained"
             startIcon={<PaidIcon />}
+            style={{margin:'7px 0px 7px'}}
         >
             {loading ? 'Loading...' : ' Make Payment'}
         </Button>

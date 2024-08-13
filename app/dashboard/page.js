@@ -1,46 +1,41 @@
-// Dashboard.js
 'use client'
 import React, { useEffect, useState, useRef } from 'react';
-import { Stack } from '@mui/material';
+import { Box, Card, FormControl, InputLabel, MenuItem, Select, Stack } from '@mui/material';
 import StripeCheckout from '@/Component/stripeCheckout';
 import withAuth from '@/Component/withAuth';
 import axios from 'axios';
-import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
-// import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import moment from 'moment';
 import CircularProgress from '@mui/material/CircularProgress';
 
 const columns = [
     { id: '', label: 'Id', minWidth: 40 },
-    { id: 'email', label: 'CustomerEmail', minWidth: 100 },
-    { id: 'transactionId', label: 'TransactionId', minWidth: 150 },
-    { id: 'price', label: 'Amount', minWidth: 150 },
-    { id: 'status', label: 'Status', minWidth: 150 },
-    { id: 'createdAt', label: 'Date', minWidth: 100 },
+    { id: 'email', label: 'Customer Email', minWidth: 150 },
+    { id: 'transactionId', label: 'Transaction-Id', minWidth: 150 },
+    { id: 'price', label: 'Amount', minWidth: 100 },
+    { id: 'status', label: 'Status', minWidth: 100 },
+    { id: 'createdAt', label: 'Date', minWidth: 150 },
 ];
 
 const Dashboard = () => {
     let stripeSecretKey = process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY;
     const [record, setRecord] = useState([]);
-    console.log("record", record)
-    // const [total, setTotal] = useState(10);
-    // const [page, setPage] = useState(1);
-    // const [rowsPerPage, setRowsPerPage] = useState(10);
-    const status = useRef(true)
+    const [filteredRecord, setFilteredRecord] = useState([]);
+    const [statusValue, setStatusValue] = useState('');
+    const [loading, setLoading] = useState(true);
+    const status = useRef(true);
 
     useEffect(() => {
         if (status.current) {
             handleRecord();
         }
-        status.current = false
-    }, [])
-
+        status.current = false;
+    }, []);
 
     const getCustomerEmailFromCharge = async (chargeId) => {
         try {
@@ -59,14 +54,15 @@ const Dashboard = () => {
 
     const handleRecord = async () => {
         try {
+            setLoading(true);
             const response = await axios.get('https://api.stripe.com/v1/payment_intents', {
                 headers: {
                     'Authorization': `Bearer ${stripeSecretKey}`,
                     'Content-Type': 'application/json',
                 },
                 params: {
-                    limit: 100
-                }
+                    limit: 100,
+                },
             });
 
             if (response.status !== 200) {
@@ -78,10 +74,8 @@ const Dashboard = () => {
 
             for (const intent of paymentIntents) {
                 const customerEmail = intent.latest_charge ? await getCustomerEmailFromCharge(intent.latest_charge) : 'No customer associated';
-
-                // Extract relevant details
-                const transactionId = intent.id
-                const date = moment.unix(intent.created ).format('DD-MM-YYYY HH:mm:ss');
+                const transactionId = intent.id;
+                const date = moment.unix(intent.created).format('DD-MM-YYYY HH:mm:ss');
                 const price = (intent.amount / 100).toFixed(2);
                 const status = intent.status;
 
@@ -90,33 +84,57 @@ const Dashboard = () => {
                     customerEmail,
                     date,
                     price,
-                    status
+                    status,
                 });
             }
+
             setRecord(transactionDetails);
+            setFilteredRecord(transactionDetails);
+            setLoading(false);
+
         } catch (error) {
             console.error(error);
+            setLoading(false);
         }
-    }
+    };
 
-    // const handleChangePage = (event, newPage) => {
-    //     setPage(newPage);
-    // };
+    const handleStatus = (event) => {
+        let value = event.target.value;
+        setStatusValue(value);
 
-    // const handleChangeRowsPerPage = (event) => {
-    //     setRowsPerPage(+event.target.value);
-    //     setPage(1);
-    // };
-
+        if (value) {
+            const filtered = record.filter(intent => intent.status === value);
+            setFilteredRecord(filtered); 
+        } else {
+            setFilteredRecord(record);
+        }
+    };
 
     return (
         <div style={{ height: '100%', width: '100%' }}>
             <Stack gap={"20px"} alignItems={"center"} >
+                <Box marginRight={'10%'} display="flex" alignSelf={'end'} gap={4}>
+                   
+                    <StripeCheckout  />
 
-                <StripeCheckout />
+                    <FormControl sx={{ m: 1, minWidth: 150 }}>
+                        <InputLabel id="demo-simple-select-label">Status</InputLabel>
+                        <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={statusValue}
+                            label="Status"
+                            onChange={handleStatus}
+                        >
+                            <MenuItem value=''>All</MenuItem>
+                            <MenuItem value={'succeeded'}>Succeeded</MenuItem>
+                            <MenuItem value={'canceled'}>Canceled</MenuItem>
+                            <MenuItem value={'failed'}>Failed</MenuItem>
+                        </Select>
+                    </FormControl>
+                </Box>
 
-
-                <Paper sx={{ width: '90%', overflow: 'hidden' }}>
+                <Card sx={{ width: '80%' }}>
                     <TableContainer sx={{ maxHeight: 500 }}>
                         <Table stickyHeader aria-label="sticky table">
                             <TableHead>
@@ -124,7 +142,7 @@ const Dashboard = () => {
                                     {columns.map((column) => (
                                         <TableCell
                                             key={column.id}
-                                            style={{ minWidth: column.minWidth }}
+                                            style={{ minWidth: column.minWidth ,backgroundColor : 'gray' , color:'white' ,fontWeight:'bold' }}
                                         >
                                             {column.label}
                                         </TableCell>
@@ -132,51 +150,36 @@ const Dashboard = () => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {record.length > 0 ? record?.map((row, ind) => (
-                                    <TableRow key={row.id}>
-                                        <TableCell component="th" scope="row">
-                                            {/* {ind + 1 + (page - 1) * 10} */}
-                                            {ind}
-                                        </TableCell>
-                                        <TableCell component="th" scope="row" align="left">
-                                            {row.customerEmail ? row?.customerEmail : '--'}
-                                        </TableCell>
-                                        <TableCell component="th" scope="row" align="left">
-                                            {row.transactionId ? row?.transactionId : '--'}
-                                        </TableCell>
-                                        <TableCell component="th" scope="row" align="left">
-                                            {row.price ? row?.price : '--'}
-                                        </TableCell>
-                                        <TableCell component="th" scope="row" align="left">
-                                            {row.status ? row?.status : '--'}
-                                        </TableCell>
-                                        <TableCell style={{ width: 160 }} align="left">
-                                            {row?.date}
-                                        </TableCell>
-                                    </TableRow>
-                                ))
-                                    :
+                                {loading ? (
                                     <TableRow>
                                         <TableCell colSpan={columns.length} align="center">
-                                            <CircularProgress /> 
+                                            <CircularProgress />
                                         </TableCell>
                                     </TableRow>
-
-                                }
-
+                                ) : filteredRecord.length > 0 ? (
+                                    filteredRecord.map((row, ind) => (
+                                        <TableRow key={row.transactionId}>
+                                            <TableCell component="th" scope="row">
+                                                {ind + 1}
+                                            </TableCell>
+                                            <TableCell align="left">{row.customerEmail || '--'}</TableCell>
+                                            <TableCell align="left">{row.transactionId || '--'}</TableCell>
+                                            <TableCell align="left">{row.price || '--'}</TableCell>
+                                            <TableCell align="left">{row.status || '--'}</TableCell>
+                                            <TableCell align="left">{row.date}</TableCell>
+                                        </TableRow>
+                                    ))
+                                ) : (
+                                    <TableRow>
+                                        <TableCell colSpan={columns.length} align="center">
+                                            No Record available
+                                        </TableCell>
+                                    </TableRow>
+                                )}
                             </TableBody>
                         </Table>
                     </TableContainer>
-                    {/* <TablePagination
-                        rowsPerPageOptions={[10, 25, 50]}
-                        component="div"
-                        count={total}
-                        rowsPerPage={rowsPerPage}
-                        page={page - 1}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
-                    /> */}
-                </Paper>
+                </Card>
             </Stack>
         </div>
     );

@@ -18,7 +18,6 @@ export async function GET(request) {
                 skip: (page - 1) * rowsPerPage,
                 take: parseInt(rowsPerPage),
             });
-            console.log('paymentsss', payments)
             const paymentsWithUserDetails = await Promise.all(
                 payments.map(async (payment) => {
                     const user = await prisma.user.findUnique({
