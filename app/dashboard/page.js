@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, Suspense } from 'react';
 import { Box, Card, FormControl, InputLabel, MenuItem, Select, Stack } from '@mui/material';
 import StripeCheckout from '@/Component/stripeCheckout';
 import withAuth from '@/Component/withAuth';
@@ -128,13 +128,14 @@ const Dashboard = () => {
     // };
 
     return (
-        <div style={{ height: '100%', width: '100%' }}>
-            <Stack gap={"20px"} alignItems={"center"} >
-                <Box marginRight={'10%'} display="flex" alignSelf={'end'} gap={4}>
+        <Suspense>
+            <div style={{ height: '100%', width: '100%' }}>
+                <Stack gap={"20px"} alignItems={"center"} >
+                    <Box marginRight={'10%'} display="flex" alignSelf={'end'} gap={4}>
 
-                    <StripeCheckout />
+                        <StripeCheckout />
 
-                    {/* <FormControl sx={{ m: 1, minWidth: 150 }}>
+                        {/* <FormControl sx={{ m: 1, minWidth: 150 }}>
                         <InputLabel id="demo-simple-select-label">Status</InputLabel>
                         <Select
                             labelId="demo-simple-select-label"
@@ -149,56 +150,57 @@ const Dashboard = () => {
                             <MenuItem value={'failed'}>Failed</MenuItem>
                         </Select>
                     </FormControl> */}
-                </Box>
+                    </Box>
 
-                <Card sx={{ width: '80%' }}>
-                    <TableContainer sx={{ maxHeight: 500 }}>
-                        <Table stickyHeader aria-label="sticky table">
-                            <TableHead>
-                                <TableRow>
-                                    {columns.map((column) => (
-                                        <TableCell
-                                            key={column.id}
-                                            style={{ minWidth: column.minWidth, backgroundColor: 'gray', color: 'white', fontWeight: 'bold' }}
-                                        >
-                                            {column.label}
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {loading ? (
+                    <Card sx={{ width: '80%' }}>
+                        <TableContainer sx={{ maxHeight: 500 }}>
+                            <Table stickyHeader aria-label="sticky table">
+                                <TableHead>
                                     <TableRow>
-                                        <TableCell colSpan={columns.length} align="center">
-                                            <CircularProgress />
-                                        </TableCell>
-                                    </TableRow>
-                                ) : filteredRecord.length > 0 ? (
-                                    filteredRecord.map((row, ind) => (
-                                        <TableRow key={row.transactionId}>
-                                            <TableCell component="th" scope="row">
-                                                {ind + 1}
+                                        {columns.map((column) => (
+                                            <TableCell
+                                                key={column.id}
+                                                style={{ minWidth: column.minWidth, backgroundColor: 'gray', color: 'white', fontWeight: 'bold' }}
+                                            >
+                                                {column.label}
                                             </TableCell>
-                                            <TableCell align="left">{row.customerEmail || '--'}</TableCell>
-                                            <TableCell align="left">{row.transactionId || '--'}</TableCell>
-                                            <TableCell align="left">{row.price || '--'}</TableCell>
-                                            <TableCell align="left">{row.status || '--'}</TableCell>
-                                            <TableCell align="left">{row.date}</TableCell>
-                                        </TableRow>
-                                    ))
-                                ) : (
-                                    <TableRow>
-                                        <TableCell colSpan={columns.length} align="center">
-                                            No Record available
-                                        </TableCell>
+                                        ))}
                                     </TableRow>
-                                )}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </Card>
-            </Stack>
-        </div>
+                                </TableHead>
+                                <TableBody>
+                                    {loading ? (
+                                        <TableRow>
+                                            <TableCell colSpan={columns.length} align="center">
+                                                <CircularProgress />
+                                            </TableCell>
+                                        </TableRow>
+                                    ) : filteredRecord.length > 0 ? (
+                                        filteredRecord.map((row, ind) => (
+                                            <TableRow key={row.transactionId}>
+                                                <TableCell component="th" scope="row">
+                                                    {ind + 1}
+                                                </TableCell>
+                                                <TableCell align="left">{row.customerEmail || '--'}</TableCell>
+                                                <TableCell align="left">{row.transactionId || '--'}</TableCell>
+                                                <TableCell align="left">{row.price || '--'}</TableCell>
+                                                <TableCell align="left">{row.status || '--'}</TableCell>
+                                                <TableCell align="left">{row.date}</TableCell>
+                                            </TableRow>
+                                        ))
+                                    ) : (
+                                        <TableRow>
+                                            <TableCell colSpan={columns.length} align="center">
+                                                No Record available
+                                            </TableCell>
+                                        </TableRow>
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Card>
+                </Stack>
+            </div>
+        </Suspense>
     );
 
 }
