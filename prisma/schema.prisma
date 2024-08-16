@@ -25,3 +25,13 @@ model Payments {
     createdAt DateTime @default(now()) @map(name: "created_at")
     updatedAt DateTime @updatedAt @map(name: "updated_at")
 }
+
+model ACH_Payment {
+  id                 String   @id @default(cuid())
+  customerEmail      String
+  stripePaymentIntentId String @unique
+  amount             Int
+  status             String
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}

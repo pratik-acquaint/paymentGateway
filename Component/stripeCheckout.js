@@ -2,7 +2,6 @@ import { Button } from '@mui/material';
 import { loadStripe } from '@stripe/stripe-js';
 import { useState } from 'react';
 import PaidIcon from '@mui/icons-material/Paid';
-import axios from 'axios';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY);
 
@@ -16,7 +15,6 @@ const StripeCheckout = (props) => {
             lineItems: [{ price: 'price_1PlpqYKxM0bICH2VyjLBMpSk', quantity: 1 }],
             mode: 'payment',
             successUrl: `${window.location.origin}/dashboard`,
-
         });
         if (error) {
             console.error('Error:', error);

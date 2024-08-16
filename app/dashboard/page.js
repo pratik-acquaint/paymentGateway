@@ -1,7 +1,6 @@
 'use client'
 import React, { useEffect, useState, useRef } from 'react';
 import { Box, Card, FormControl, InputLabel, MenuItem, Select, Stack } from '@mui/material';
-import StripeCheckout from '@/Component/stripeCheckout';
 import withAuth from '@/Component/withAuth';
 import axios from 'axios';
 import Table from '@mui/material/Table';
@@ -12,6 +11,8 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import moment from 'moment';
 import CircularProgress from '@mui/material/CircularProgress';
+import StripeACHForm from '@/Component/stripeCheckout';
+import ACHPayment from '@/Component/ACHform';
 
 const columns = [
     { id: '', label: 'Id', minWidth: 40 },
@@ -61,8 +62,9 @@ const Dashboard = () => {
                     'Content-Type': 'application/json',
                 },
                 params: {
-                    limit: 100,
+                    limit: 15
                 },
+
             });
 
             if (response.status !== 200) {
@@ -104,7 +106,7 @@ const Dashboard = () => {
 
         if (value) {
             const filtered = record.filter(intent => intent.status === value);
-            setFilteredRecord(filtered); 
+            setFilteredRecord(filtered);
         } else {
             setFilteredRecord(record);
         }
@@ -114,8 +116,9 @@ const Dashboard = () => {
         <div style={{ height: '100%', width: '100%' }}>
             <Stack gap={"20px"} alignItems={"center"} >
                 <Box marginRight={'10%'} display="flex" alignSelf={'end'} gap={4}>
-                   
-                    <StripeCheckout  />
+
+                    {/* <StripeACHForm/> */}
+                    <ACHPayment/>
 
                     <FormControl sx={{ m: 1, minWidth: 150 }}>
                         <InputLabel id="demo-simple-select-label">Status</InputLabel>
@@ -142,7 +145,7 @@ const Dashboard = () => {
                                     {columns.map((column) => (
                                         <TableCell
                                             key={column.id}
-                                            style={{ minWidth: column.minWidth ,backgroundColor : 'gray' , color:'white' ,fontWeight:'bold' }}
+                                            style={{ minWidth: column.minWidth, backgroundColor: 'gray', color: 'white', fontWeight: 'bold' }}
                                         >
                                             {column.label}
                                         </TableCell>
